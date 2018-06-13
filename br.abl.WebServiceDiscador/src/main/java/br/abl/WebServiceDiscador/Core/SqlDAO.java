@@ -29,7 +29,7 @@ public class SqlDAO {
 		//this.connection = new ConnectionFactory().getConnection();
 	}
 	
-	//MÈtodo para pegar o prÛximo n˙mero para ligar
+	//M√©todo para pegar o pr√≥ximo n√∫mero para ligar
 	public static synchronized Vector<String>  getProximoNumero(int id, int counterID) throws ParseException, SQLException {		
 		Connection connection = new ConnectionFactory().getConnection();
 		Calendar cal = Calendar.getInstance();
@@ -42,13 +42,13 @@ public class SqlDAO {
 		Date agora = dateFormat.parse(agro);		
 		Date horarioLigar;
 		String result;
-		//Query para pegar numero do telefone, num de tentativas de ligar pra este n˙mero,
-		//data da prÛxima ligaÁ„o, ID do cliente, Resultado, e o Tipo.
+		//Query para pegar numero do telefone, num de tentativas de ligar pra este n√∫mero,
+		//data da pr√≥xima liga√ß√£o, ID do cliente, Resultado, e o Tipo.
 		try {
 			PreparedStatement stmt = connection.prepareStatement("Select numerotel,vezesligou,DataProxLigacao,IDCliente,Result,Tipo from campanhas.numeros where status = 0 AND IDCampanha = " + id +" AND Tipo = \'PRINC\'");
 			ResultSet rs = stmt.executeQuery();
 			
-			//Enquanto n„o pegar um n˙mero, fica no loop.
+			//Enquanto n√£o pegar um n√∫mero, fica no loop.
 			while(numTel.isEmpty()) {	
 				rs.next();				
 				result = rs.getString(5);
@@ -58,19 +58,19 @@ public class SqlDAO {
 				numControle = rs.getString(1);
 						
 				horarioLigar = new Date();
-				//Pega o hor·rio agendado da prÛxima ligaÁ„o caso exista.
+				//Pega o hor√°rio agendado da pr√≥xima liga√ß√£o caso exista.
 				if(!dataProxLigacao.equals(" ")) {
 					horarioLigar = dateFormat.parse(dataProxLigacao);
 				}
-				//Verifica se o n˙mero de tentativas È menor que o m·ximo, se n„o existe um hor·rio para a prÛxima ligaÁ„o, e se o resultado È diferente
-				//de OKAY, que significa que o cliente j· atendeu e n„o deve ser ligado novamente. Ou verifica se o hor·rio atual È apÛs o agendado, e se o n˙mero de tentativas
-				//È menor que o m·ximo, e se o resultado È diferente de OKAY
+				//Verifica se o n√∫mero de tentativas √© menor que o m√°ximo, se n√£o existe um hor√°rio para a pr√≥xima liga√ß√£o, e se o resultado √© diferente
+				//de OKAY, que significa que o cliente j√° atendeu e n√£o deve ser ligado novamente. Ou verifica se o hor√°rio atual √© ap√≥s o agendado, e se o n√∫mero de tentativas
+				//√© menor que o m√°ximo, e se o resultado √© diferente de OKAY
 				if(vezesLigou<CriadorCampanhas.campanhas.get(id-1).getNumTent() && dataProxLigacao.equals(" ") && !result.equals("OKAY") || agora.after(horarioLigar) && vezesLigou<CriadorCampanhas.campanhas.get(id-1).getNumTent() && !result.equals("OKAY")) {
 					numTel = rs.getString(1);
 					numeros.add(numTel);
 				}
 				
-				//Se n„o der, verifica se o resultado È diferente de OKAY e se agora È depois do hor·rio agendado.
+				//Se n√£o der, verifica se o resultado √© diferente de OKAY e se agora √© depois do hor√°rio agendado.
 				else if(!result.equals("OKAY") && agora.after(horarioLigar)){					
 					PreparedStatement stm = connection.prepareStatement("Select numerotel,vezesligou,IDCliente,Result,DataProxLigacao from campanhas.numeros where  IDCampanha = "+id+" AND IDCliente ="+idCliente+";");					
 					ResultSet rss = stm.executeQuery();
@@ -105,7 +105,7 @@ public class SqlDAO {
 			
 		numeros.add(String.valueOf(vezesLigou));
 		numeros.add(numControle);
-		System.out.println("Peguei o prÛximo n˙mero para ligar! " + numTel);
+		System.out.println("Peguei o pr√≥ximo n√∫mero para ligar! " + numTel);
 		stmt.close();
 		rs.close();		
 		connection.close();
@@ -121,9 +121,8 @@ public class SqlDAO {
 		return numeros;
 		} catch (SQLException e) {	
 			//throw new RuntimeException(e);
-			System.out.println("N„o h· mais n˙meros para ligar ! ");
-			CampanhaManager.ids.set(counterID, CampanhaManager.ids.get(counterID) - 1 );
-			CriadorCampanhas.campanhas.get(id-1).setStatus("Pausado");
+			System.out.println("N√£o h√° mais n√∫meros para ligar ! ");
+			CampanhaManager.ids.set(counterID, CampanhaManager.ids.get(counterID) - 1 );			
 						
 		    connection.close();
 			return numeros; 			
@@ -131,7 +130,7 @@ public class SqlDAO {
 	}
 	
 	public synchronized void atualizaLigacoes(String uniqueId, String numLigado, int idCampanha,int vez, int counterID, String numPai, String status, long billSec) throws InterruptedException {
-		System.out.println("UNIQUE ID MEU … : " + uniqueId);		
+		System.out.println("UNIQUE ID MEU √â : " + uniqueId);		
 		Calendar cal = Calendar.getInstance();
 		String sql = null, sqldois = null;
 		System.out.println();
@@ -146,11 +145,11 @@ public class SqlDAO {
 			if (billSec >= 10) {
 				 sql = "update  campanhas.numeros set Result = 'OKAY'  where numerotel =" + numLigado;
 				 
-				System.out.println("Setei result para OKAY, ligaÁ„o para " + numLigado + " deu certo !");
+				System.out.println("Setei result para OKAY, liga√ß√£o para " + numLigado + " deu certo !");
 			}
 			else {
 				sql = "update campanhas.numeros set Result = 'NOPE' where numerotel =" +numLigado;
-				System.out.println("Somei 1 para o vezesligou, ligaÁ„o muito curta! ");
+				System.out.println("Somei 1 para o vezesligou, liga√ß√£o muito curta! ");
 			}
 			
 			sqldois = "update campanhas.numeros set vezesligou = vezesligou + 1 where numerotel =" + numLigado;
@@ -190,7 +189,7 @@ public class SqlDAO {
 			stmtObj.executeBatch();
 			stmtObj.close();
 			this.connection.close();
-			System.out.println("LigaÁ„o n„o deu certo para " + numLigado +  ", somei 1 ao vezesligou !");			
+			System.out.println("Liga√ß√£o n√£o deu certo para " + numLigado +  ", somei 1 ao vezesligou !");			
 			this.connection = new ConnectionFactory().getConnection();
 			if(CriadorCampanhas.campanhas.get(idCampanha -1).getHoraTent() > 0){
 				cal.add(Calendar.HOUR_OF_DAY,CriadorCampanhas.campanhas.get(idCampanha -1).getHoraTent() );
@@ -219,7 +218,7 @@ public class SqlDAO {
 			connection.close();
 			System.out.println("Voltei o status para 0 !");				
 			logger(idCampanha,numLigado,billSec,uniqueId,status,vez,this.dataAgora,numPai);
-			System.out.println("Log criado com sucesso para a ligaÁ„o para o numero: " + numLigado);
+			System.out.println("Log criado com sucesso para a liga√ß√£o para o numero: " + numLigado);
 			CampanhaManager.ids.set(counterID, CampanhaManager.ids.get(counterID) - 1 );
 
 		} catch(SQLException e) {
@@ -298,7 +297,7 @@ public class SqlDAO {
 			
 		} catch(SQLException | IndexOutOfBoundsException e ) {
 			throw new RuntimeException(e);
-		    //System.out.println("Alguns ou todos estes n˙meros j· est„o na tabela");
+		    //System.out.println("Alguns ou todos estes n√∫meros j√° est√£o na tabela");
 			//CriadorCampanhas.flagExiste = 1;
 		}		
 	}
@@ -328,7 +327,7 @@ public class SqlDAO {
 			
 		} catch(SQLException | IndexOutOfBoundsException e ) {
 			throw new RuntimeException(e);
-		    //System.out.println("Alguns ou todos estes n˙meros j· est„o na tabela");
+		    //System.out.println("Alguns ou todos estes n√∫meros j√° est√£o na tabela");
 			//CriadorCampanhas.flagExiste = 1;
 		}		
 	} */
